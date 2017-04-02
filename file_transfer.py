@@ -3,8 +3,12 @@ import ctypes
 import os
 import time
 
-def copy_files(dirname):
-    return ""
+dirname = "testdir"
+target_directory = "~/Documents"
+
+def copy_files(path):
+    if os.path.isdir(path):
+
 
 
 def main():
