@@ -6,7 +6,7 @@ import shutil
 
 
 class FileTransfer:
-    
+
     dirname = "Professional"
     target_directory = os.path.expanduser("~")+"/"+"Documents"
 
@@ -30,5 +30,5 @@ class FileTransfer:
                             copy_files(x+"/"+dirname)
                 
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()
