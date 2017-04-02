@@ -2,14 +2,14 @@ import pyudev
 import ctypes
 import os
 import time
+import shutil
 
-dirname = "testdir"
-target_directory = "~/Documents"
+dirname = "Professional"
+target_directory = os.path.expanduser("~")+"/"+"Documents"
 
 def copy_files(path):
     if os.path.isdir(path):
-
-
+        shutil.copytree(path, target_directory+"/"+dirname)
 
 def main():
     context = pyudev.Context()
@@ -21,7 +21,8 @@ def main():
             time.sleep(5)
             for l in file('/proc/mounts'):
                 if device.device_node in l:
-                    x = l.split(' ')[1]
+                    print l
+                    x = l.split(' ')[1].replace('\\040',' ')
                     if dirname in os.listdir(x):
                         copy_files(x+"/"+dirname)
             
