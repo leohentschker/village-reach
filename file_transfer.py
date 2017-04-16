@@ -6,7 +6,7 @@ import shutil
 
 class FileTransfer:
 
-    dirname = "Professional"
+    dirname = ""
     target_directory = os.path.expanduser("~")+"/"+"Documents"
 
     def copy_files(path):
