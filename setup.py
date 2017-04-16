@@ -3,7 +3,11 @@ from distutils.core import setup
 
 
 class PybluezInstall(install):
+    """
+    Custom install script to install pybluez locally on a linux machine
+    """
     def run(self):
+        # handle the super install
         install.run(self)
 
 setup(
@@ -15,7 +19,7 @@ setup(
     scripts=[],
     url='http://pypi.python.org/pypi/VillageReach/',
     license='LICENSE.txt',
-    description='Facilitating file transfer between drones and basis',
+    description='Facilitating bluetooth file transfer',
     long_description=open('README.txt').read(),
     install_requires=[],
     cmdclass={"install": PybluezInstall}
