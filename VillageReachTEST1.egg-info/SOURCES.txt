@@ -1,0 +1,9 @@
+README.txt
+setup.py
+VillageReachTEST1.egg-info/PKG-INFO
+VillageReachTEST1.egg-info/SOURCES.txt
+VillageReachTEST1.egg-info/dependency_links.txt
+VillageReachTEST1.egg-info/top_level.txt
+villagereach/__init__.py
+villagereach/file_transfer.py
+villagereach/test/__init__.py
