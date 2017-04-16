@@ -1,5 +1,4 @@
 import pyudev
-import ctypes
 import os
 import time
 import shutil
