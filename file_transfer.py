@@ -6,7 +6,6 @@ import shutil
 import hashlib
 
 
-<<<<<<< HEAD
 class FileTransfer():
 
     def __init__(self, sourcedir, targetdir=None):
@@ -40,6 +39,8 @@ class FileTransfer():
 
     def main(self):
         self.file_dictionary = {}
+        self.source_directory = "./test"
+        self.target_directory = "./target"
         self.hasher = hashlib.md5()
         context = pyudev.Context()
         monitor = pyudev.Monitor.from_netlink(context)
@@ -55,7 +56,7 @@ class FileTransfer():
                         if self.dirname in os.listdir(x):
                             self.copy_files(x+"/"+self.dirname)
         self.create_dictionary()
-        self.copy_files("./test")
+        self.copy_files()
                 
 
 if __name__ == '__main__':
