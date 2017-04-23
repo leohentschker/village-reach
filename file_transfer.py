@@ -1,19 +1,26 @@
 import pyudev
 import os
+import sys
 import time
 import shutil
 
 
-class FileTransfer:
+class FileTransfer():
 
-    dirname = ""
-    target_directory = os.path.expanduser("~")+"/"+"Documents"
+    def __init__(self, sourcedir, targetdir=None):
+        if targetdir is None:
+            self.target_directory = os.path.expanduser("~")
+        else:
+            self.target_directory = targetdir
+        self.dirname = sourcedir
 
-    def copy_files(path):
+    def copy_files(self, path):
         if os.path.isdir(path):
-            shutil.copytree(path, target_directory+"/"+dirname)
+            for root, dirs, files in os.walk(path):
+                print root, dirs, files
+            shutil.copytree(path, self.target_directory +"/"+ self.dirname)
 
-    def main():
+    def main(self):
         context = pyudev.Context()
         monitor = pyudev.Monitor.from_netlink(context)
         monitor.filter_by('block')
@@ -25,9 +32,19 @@ class FileTransfer:
                     if device.device_node in l:
                         print l
                         x = l.split(' ')[1].replace('\\040',' ')
-                        if dirname in os.listdir(x):
-                            copy_files(x+"/"+dirname)
+                        if self.dirname in os.listdir(x):
+                            self.copy_files(x+"/"+self.dirname)
                 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 3:
+        ft = FileTransfer(sys.argv[1], sys.argv[2])
+        ft.main()
+    elif len(sys.argv) == 2:
+        ft = FileTransfer(sys.argv[1])
+        ft.main()
+    else:
+        print("Usage: \"file_transfer.py <source>\": Transfer source directory on usb to local storage")
+        print("Usage: \"file_transfer.py <source> <target>\": Transfer source directory on usb to full path target directory on local storage")
+        sys.exit(2)
+
