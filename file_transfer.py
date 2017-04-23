@@ -33,13 +33,13 @@ class FileTransfer(object):
         self.print_dictionary()
 
 
-    def copy_files(self, path):
-        if os.path.isdir(path):
-            shutil.copytree(path, os.path.join(self.target_directory, self.dirname))
+    def copy_files(self):
+        if os.path.isdir(self.source_directory):
+            shutil.copytree(self.source_directory, self.target_directory)
 
     def main(self):
         self.file_dictionary = {}
-        self.dirname = "./test"
+        self.source_directory = "./test"
         self.target_directory = "./target"
         self.hasher = hashlib.md5()
         # context = pyudev.Context()
@@ -57,7 +57,7 @@ class FileTransfer(object):
         #                     copy_files(x+"/"+dirname)
         # target_directory = os.path.expanduser("~")+"/"+"Documents"
         self.create_dictionary()
-        self.copy_files("./test")
+        self.copy_files()
                 
 
 if __name__ == '__main__':
