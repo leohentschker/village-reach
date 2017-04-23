@@ -1,10 +1,12 @@
-import pyudev
+# import pyudev
 import os
 import sys
 import time
 import shutil
+import hashlib
 
 
+<<<<<<< HEAD
 class FileTransfer():
 
     def __init__(self, sourcedir, targetdir=None):
@@ -14,13 +16,31 @@ class FileTransfer():
             self.target_directory = targetdir
         self.dirname = sourcedir
 
+    def hash_text(self, text):
+        self.hasher.update(text)
+        return self.hasher.hexdigest()
+
+    def print_dictionary(self):
+        for key, value in self.file_dictionary.items():
+            print "Hash Name: " + key + " File Name: " + value
+
+    def create_dictionary(self):
+        for dirName, subdirList, fileList in os.walk(self.target_directory):
+            print dirName
+            print fileList
+            for fname in fileList:
+                with open(dirName + "/" + fname, 'r') as myfile:
+                    hash_name = self.hash_text(myfile.read())
+                    self.file_dictionary[os.path.join(dirName, fname) + hash_name] = fname
+        self.print_dictionary()
+
     def copy_files(self, path):
         if os.path.isdir(path):
-            for root, dirs, files in os.walk(path):
-                print root, dirs, files
-            shutil.copytree(path, self.target_directory +"/"+ self.dirname)
+            shutil.copytree(path, os.path.join(self.target_directory, self.dirname))
 
     def main(self):
+        self.file_dictionary = {}
+        self.hasher = hashlib.md5()
         context = pyudev.Context()
         monitor = pyudev.Monitor.from_netlink(context)
         monitor.filter_by('block')
@@ -34,6 +54,8 @@ class FileTransfer():
                         x = l.split(' ')[1].replace('\\040',' ')
                         if self.dirname in os.listdir(x):
                             self.copy_files(x+"/"+self.dirname)
+        self.create_dictionary()
+        self.copy_files("./test")
                 
 
 if __name__ == '__main__':
@@ -47,4 +69,3 @@ if __name__ == '__main__':
         print("Usage: \"file_transfer.py <source>\": Transfer source directory on usb to local storage")
         print("Usage: \"file_transfer.py <source> <target>\": Transfer source directory on usb to full path target directory on local storage")
         sys.exit(2)
-
