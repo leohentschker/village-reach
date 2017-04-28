@@ -1,9 +1,14 @@
-# import pyudev
 import os
 import time
 import shutil
 import hashlib
 import datetime
+
+try:
+    import pyudev
+    PYUDEV = True
+except:
+    PYUDEV = False
 
 
 class FileTransfer(object):
@@ -41,6 +46,7 @@ class FileTransfer(object):
 
 
     def main(self):
+        assert PYUDEV, "Need PYUDEV to run this!"
         self.source = "test"
         context = pyudev.Context()
         monitor = pyudev.Monitor.from_netlink(context)
@@ -53,7 +59,7 @@ class FileTransfer(object):
                     if device.device_node in l:
                         print l
                         x = l.split(' ')[1].replace('\\040',' ')
-                        self.source_directory = x + "/" self.source
+                        self.source_directory = x + "/" + self.source
                         self.target_directory = os.path.expanduser("~")+"/"+"Documents"
                         if self.source in os.listdir(x):
                             self.file_dictionary = {}
@@ -65,4 +71,3 @@ class FileTransfer(object):
 
 if __name__ == '__main__':
     FileTransfer().main()
-
