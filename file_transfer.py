@@ -41,25 +41,26 @@ class FileTransfer(object):
 
 
     def main(self):
-        self.file_dictionary = {}
-        self.source_directory = "./test"
-        self.target_directory = "./target"
-        # context = pyudev.Context()
-        # monitor = pyudev.Monitor.from_netlink(context)
-        # monitor.filter_by('block')
-        # for device in iter(monitor.poll, None):
-        #     if 'ID_FS_TYPE' in device and device.action == 'add':
-        #         print('{0} partition {1}'.format(device.action,device.get('ID_FS_LABEL')))
-        #         time.sleep(5)
-        #         for l in file('/proc/mounts'):
-        #             if device.device_node in l:
-        #                 print l
-        #                 x = l.split(' ')[1].replace('\\040',' ')
-        #                 if dirname in os.listdir(x):
-        #                     copy_files(x+"/"+dirname)
-        # target_directory = os.path.expanduser("~")+"/"+"Documents"
-        self.create_dictionary()
-        self.copy_files()
+        self.source = "test"
+        context = pyudev.Context()
+        monitor = pyudev.Monitor.from_netlink(context)
+        monitor.filter_by('block')
+        for device in iter(monitor.poll, None):
+            if 'ID_FS_TYPE' in device and device.action == 'add':
+                print('{0} partition {1}'.format(device.action,device.get('ID_FS_LABEL')))
+                time.sleep(5)
+                for l in file('/proc/mounts'):
+                    if device.device_node in l:
+                        print l
+                        x = l.split(' ')[1].replace('\\040',' ')
+                        self.source_directory = x + "/" self.source
+                        self.target_directory = os.path.expanduser("~")+"/"+"Documents"
+                        if self.source in os.listdir(x):
+                            self.file_dictionary = {}
+                            self.create_dictionary()
+                            self.copy_files()
+        
+        
                 
 
 if __name__ == '__main__':
