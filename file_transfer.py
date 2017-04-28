@@ -3,16 +3,13 @@ import os
 import time
 import shutil
 import hashlib
+import datetime
 
 
 class FileTransfer(object):
 
-    # dirname = "test"
-    # # target_directory = os.path.expanduser("~")+"/"+"Documents"
-    # target_directory = "target"
-    # hasher = hashlib.md5()
-
     def hash_text(self, text):
+        self.hasher = hashlib.md5()
         self.hasher.update(text)
         return self.hasher.hexdigest()
 
@@ -23,25 +20,30 @@ class FileTransfer(object):
 
     def create_dictionary(self):
         for dirName, subdirList, fileList in os.walk(self.target_directory):
-            print dirName
-            print fileList
             for fname in fileList:
-                with open(dirName + "/" + fname, 'r') as myfile:
+                with open(os.path.join(dirName, fname), 'r') as myfile:
                     hash_name = self.hash_text(myfile.read())
-                    self.file_dictionary[os.path.join(dirName, fname) + hash_name] = fname
+                    self.file_dictionary[fname + hash_name] = fname
 
         self.print_dictionary()
 
 
     def copy_files(self):
+        target = os.path.join(self.target_directory, datetime.datetime.now().strftime("%m-%d-%y %H-%M-%S"))
         if os.path.isdir(self.source_directory):
-            shutil.copytree(self.source_directory, self.target_directory)
+            shutil.copytree(self.source_directory, target)
+        for dirName, subdirList, fileList in os.walk(target):
+            for fname in fileList:
+                with open(os.path.join(dirName, fname), 'r') as myfile:
+                    hash_name = self.hash_text(myfile.read())
+                    if (fname + hash_name) in self.file_dictionary.keys():
+                        os.remove(os.path.join(dirName, fname))
+
 
     def main(self):
         self.file_dictionary = {}
         self.source_directory = "./test"
         self.target_directory = "./target"
-        self.hasher = hashlib.md5()
         # context = pyudev.Context()
         # monitor = pyudev.Monitor.from_netlink(context)
         # monitor.filter_by('block')
