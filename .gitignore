@@ -99,3 +99,6 @@ ENV/
 
 # vim
 *.swp
+
+# packaging
+dist/*

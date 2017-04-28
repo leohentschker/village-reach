@@ -1,130 +1,73 @@
-import datetime
-import hashlib
-import shutil
-import time
-import sys
 import os
+import time
+import shutil
+import hashlib
+import datetime
+
+try:
+    import pyudev
+    PYUDEV = True
+except:
+    PYUDEV = False
 
 
-class FileTransfer:
-    """
-    Interface for moving local files from
-    one directory to another without duplicates
-    """
-
-    default_source_directory = os.path.abspath("test_source")
-    default_target_directory = os.path.abspath("test_dest")
-
-    # file hash set
-    existing_hash_set = {}
-
-    # pyudev variables
-    try:
-        import pyudev
-        pyudev_available = True
-        monitor = pyudev.Monitor.from_netlink(pyudev.Context())
-        monitor.filter_by('block')
-    except:
-        pyudev_available = False
-
-    def __init__(self, source_directory=default_source_directory,
-                 target_directory=default_target_directory):
-        """
-        Initialize the transfer class, determining where
-        to upload the files to
-        """
-        self.source_directory = source_directory
-        self.target_directory = target_directory
-        assert os.path.exists(self.source_directory), ("Cannot find source: %s" % source_directory)
-        assert os.path.exists(self.target_directory), ("Cannot find target: %s" % target_directory)
-        self.build_existing_file_set()
+class FileTransfer(object):
 
     def hash_text(self, text):
-        """
-        Takes in text and hashes it
-        """
-        hasher = hashlib.md5()
-        hasher.update(text)
-        return hasher.hexdigest()
+        self.hasher = hashlib.md5()
+        self.hasher.update(text)
+        return self.hasher.hexdigest()
 
-    def build_existing_file_set(self):
-        """
-        Builds a set of hashes for the files that
-        we have already seen
-        """
-        # initialize an empty set of hashes
-        file_hash_set = set()
+    def print_dictionary(self):
+        for key, value in self.file_dictionary.items():
+            print "Hash Name: " + key + " File Name: " + value
 
-        # walk through the file tree
-        for file_dir, _, file_list in os.walk(self.target_directory):
 
-            # add each value to our set
-            for fname in file_list:
-                file_hash = self.hash_text(open(os.path.join(file_dir, fname)).read())
-                file_hash_set.add(file_hash)
+    def create_dictionary(self):
+        for dirName, subdirList, fileList in os.walk(self.target_directory):
+            for fname in fileList:
+                with open(os.path.join(dirName, fname), 'r') as myfile:
+                    hash_name = self.hash_text(myfile.read())
+                    self.file_dictionary[fname + hash_name] = fname
 
-        # update the set of existing hashes
-        self.existing_hash_set = file_hash_set
+        self.print_dictionary()
 
-    def file_destination_from_name(self, fname):
-        """
-        Takes in a file name and determines where it should be
-        sent
-        """
-        relative_path = fname.replace(self.source_directory, "").strip("/")
-        date_prefix = datetime.datetime.now().strftime("%b %d %y/")
-        return os.path.join(self.target_directory, date_prefix, relative_path)
 
-    def upload_file(self, fname, contents):
-        """
-        Uploads a file named fname into
-        the new directory
-        """
-        destination = self.file_destination_from_name(fname)
-        os.makedirs(os.path.dirname(destination))
-        with open(destination, "wb+") as f:
-            f.write(contents)
+    def copy_files(self):
+        target = os.path.join(self.target_directory, datetime.datetime.now().strftime("%m-%d-%y %H-%M-%S"))
+        if os.path.isdir(self.source_directory):
+            shutil.copytree(self.source_directory, target)
+        for dirName, subdirList, fileList in os.walk(target):
+            for fname in fileList:
+                with open(os.path.join(dirName, fname), 'r') as myfile:
+                    hash_name = self.hash_text(myfile.read())
+                    if (fname + hash_name) in self.file_dictionary.keys():
+                        os.remove(os.path.join(dirName, fname))
 
-    def copy_new_files(self):
-        """
-        Iterates through the files in the source directory
-        and uploads new ones
-        """
-        for file_dir, _, file_list in os.walk(self.source_directory):
 
-            # check to see if we need to add each file in the source dir
-            for fname in file_list:
-
-                # get the details of a file
-                file_path = os.path.abspath(os.path.join(file_dir, fname))
-                file_text = open(file_path).read()
-                file_hash = self.hash_text(file_text)
-
-                # if it is new upload the file
-                if file_hash not in self.existing_hash_set:
-                    self.upload_file(file_path, file_text)
-
-                # mark that we have handled this file
-                self.existing_hash_set.add(file_hash)
-
-    def poll(self):
-        """
-        Polls a usb port and waits for it to be added
-        """
-        assert self.pyudev_available, "Pyudev unavailable!"
+    def main(self):
+        assert PYUDEV, "Need PYUDEV to run this!"
+        self.source = "test"
+        context = pyudev.Context()
+        monitor = pyudev.Monitor.from_netlink(context)
+        monitor.filter_by('block')
         for device in iter(monitor.poll, None):
             if 'ID_FS_TYPE' in device and device.action == 'add':
+                print('{0} partition {1}'.format(device.action,device.get('ID_FS_LABEL')))
                 time.sleep(5)
                 for l in file('/proc/mounts'):
                     if device.device_node in l:
-                        self.copy_new_files()
-
+                        print l
+                        x = l.split(' ')[1].replace('\\040',' ')
+                        self.source_directory = x + "/" + self.source
+                        self.target_directory = os.path.expanduser("~")+"/"+"Documents"
+                        if self.source in os.listdir(x):
+                            self.file_dictionary = {}
+                            self.create_dictionary()
+                            self.copy_files()
+        
+        
+                
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
-        ft = FileTransfer(sys.argv[1], sys.argv[2])
-    elif len(sys.argv) == 2:
-        ft = FileTransfer(sys.argv[1])
-    else:
-        ft = FileTransfer()
-    # ft.poll()
+    FileTransfer().main()
