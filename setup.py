@@ -12,7 +12,7 @@ class PybluezInstall(install):
 
 setup(
     name='villagereach',
-    version='0.0.1',
+    version='0.0.2',
     author='D4D',
     author_email='leohentschker@college.harvard.edu',
     packages=['villagereach', 'villagereach.test'],
