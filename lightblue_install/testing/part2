@@ -1,0 +1,7 @@
+import subprocess
+import os
+
+subprocess.call(["sudo", "apt-get", "install", "python-pip", "python-dev", "ipython"])
+subprocess.call(["sudo", "apt-get", "install", "bluetooth", "libbluetooth-dev"])
+subprocess.call(["sudo", "pip", "install", "pybluez"])
+

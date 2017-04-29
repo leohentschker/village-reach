@@ -1,0 +1,9 @@
+import subprocess
+import os
+
+subprocess.call (["sudo", "apt-get", "install", "python-dev"])
+subprocess.call(["wget", "https://sourceforge.net/projects/lightblue/files/lightblue/0.4/lightblue-0.4.tar.gz/download"])
+subprocess.call(["tar", "-zxvf", "download"])
+os.chdir ("lightblue-0.4")
+subprocess.call(["sudo", "python", "setup.py", "install"])
+

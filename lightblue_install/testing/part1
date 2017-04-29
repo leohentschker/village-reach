@@ -1,0 +1,13 @@
+import subprocess
+import os
+
+subprocess.call(["wget", "http://www.kernel.org/pub/linux/bluetooth/bluez-5.44.tar.xz"])
+subprocess.call(["tar", "xvf", "bluez-5.44.tar.xz"])
+os.chdir("bluez-5.44")
+subprocess.call(["sudo", "apt-get", "update"])
+subprocess.call(["sudo", "apt-get", "install", "-y", "libusb-dev", "libdbus-1-dev", "libglib2.0-dev", "libudev-dev", "libical-dev", "libreadline-dev"])
+subprocess.call(["./configure"])
+subprocess.call(["make"])
+subprocess.call(["sudo", "make", "install"])
+os.chdir("../")
+subprocess.call(["sudo", "systemctl", "enable", "bluetooth"])

@@ -1,0 +1,22 @@
+import subprocess
+import os
+
+subprocess.call(["sudo", "apt-get", "install", "cmake"])
+
+"""
+subprocess.call(["wget", "http://www.cmake.org/files/v2.8/cmake-2.8.3.tar.gz"])
+subprocess.call(["tar", "xzf", "cmake-2.8.3.tar.gz"])
+os.chdir("cmake-2.8.3")
+subprocess.call(["./configure", "--prefix=/opt/cmake"])
+subprocess.call(["make"])
+os.chdir("../")
+"""
+
+subprocess.call(["wget", "https://sourceforge.net/projects/openobex/files/openobex/1.7.2/openobex-1.7.2-Source.tar.gz/download"])
+subprocess.call(["tar", "-zxvf", "download"])
+subprocess.call(["mkdir", "build"])
+os.chdir("build")
+subprocess.call(["cmake", "../openobex-1.7.2-Source"])
+subprocess.call(["make"])
+subprocess.call(["sudo", "make", "install"])
+
