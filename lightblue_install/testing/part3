@@ -12,8 +12,8 @@ subprocess.call(["make"])
 os.chdir("../")
 """
 
-subprocess.call(["wget", "https://sourceforge.net/projects/openobex/files/openobex/1.7.2/openobex-1.7.2-Source.tar.gz/download"])
-subprocess.call(["tar", "-zxvf", "download"])
+subprocess.call(["wget", "obexdownload", "https://sourceforge.net/projects/openobex/files/openobex/1.7.2/openobex-1.7.2-Source.tar.gz/download"])
+subprocess.call(["tar", "-zxvf", "obexdownload"])
 subprocess.call(["mkdir", "build"])
 os.chdir("build")
 subprocess.call(["cmake", "../openobex-1.7.2-Source"])
