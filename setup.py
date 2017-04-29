@@ -1,5 +1,7 @@
 from setuptools.command.install import install
 from distutils.core import setup
+import subprocess
+import os
 
 
 class PybluezInstall(install):
@@ -8,6 +10,10 @@ class PybluezInstall(install):
     """
     def run(self):
         # handle the super install
+        subprocess.call(["sudo", "apt-get", "install", "libopenobex1-dev"])
+        subprocess.call(["sudo", "apt-get", "install", "bluez"])
+        subprocess.call(["sudo", "apt-get", "install", "python-bluez", "libbluetooth-dev", "python-dev"])
+        
         install.run(self)
 
 setup(
