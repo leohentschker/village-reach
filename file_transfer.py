@@ -3,6 +3,7 @@ import time
 import shutil
 import hashlib
 import datetime
+from send_file import SendFile
 
 try:
     import pyudev
@@ -12,29 +13,26 @@ except:
 
 
 class FileTransfer(object):
-    
+
     def hash_text(self, text):
         self.hasher = hashlib.md5()
         self.hasher.update(text)
         return self.hasher.hexdigest()
-    
+
     def print_dictionary(self):
         for key, value in self.file_dictionary.items():
             print "Hash Name: " + key + " File Name: " + value
 
-
-def create_dictionary(self):
-    for dirName, subdirList, fileList in os.walk(self.target_directory):
-        for fname in fileList:
-            with open(os.path.join(dirName, fname), 'r') as myfile:
-                hash_name = self.hash_text(myfile.read())
+    def create_dictionary(self):
+        for dirName, subdirList, fileList in os.walk(self.target_directory):
+            for fname in fileList:
+                with open(os.path.join(dirName, fname), 'r') as myfile:
+                    hash_name = self.hash_text(myfile.read())
                     self.file_dictionary[fname + hash_name] = fname
-        
-    self.print_dictionary()
+        self.print_dictionary()
 
-
-def copy_files(self):
-    target = os.path.join(self.target_directory, datetime.datetime.now().strftime("%m-%d-%y"))
+    def copy_files(self):
+        target = os.path.join(self.target_directory, datetime.datetime.now().strftime("%m-%d-%y"))
         for dirName, _, fileList in os.walk(self.source_directory):
             for fname in fileList:
                 file_name = os.path.join(dirName, fname)
@@ -49,12 +47,11 @@ def copy_files(self):
                             pass
                         with open(relative_path, "wb+") as f:
                             f.write(myfile.read())
-                                
-                                
-                                def main(self):
-                                    print "STARTING TO RUN"
-assert PYUDEV, "Need PYUDEV to run this!"
-    self.source = "village_reach_contents"
+
+    def main(self):
+        print "STARTING TO RUN"
+        assert PYUDEV, "Need PYUDEV to run this!"
+        self.source = "village_reach_contents"
         context = pyudev.Context()
         monitor = pyudev.Monitor.from_netlink(context)
         monitor.filter_by('block')
