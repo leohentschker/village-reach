@@ -68,6 +68,9 @@ class FileTransfer(object):
         
         
                 
+def run_filetransfer():
+    FileTransfer().main()
+
 
 if __name__ == '__main__':
     FileTransfer().main()
