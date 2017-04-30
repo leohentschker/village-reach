@@ -18,7 +18,7 @@ class PybluezInstall(install):
 
 setup(
     name='villagereach',
-    version='0.0.5',
+    version='0.0.6',
     author='D4D',
     author_email='leohentschker@college.harvard.edu',
     packages=['villagereach', 'villagereach.test'],
@@ -27,6 +27,6 @@ setup(
     license='LICENSE.txt',
     description='Facilitating bluetooth file transfer',
     long_description=open('README.txt').read(),
-    install_requires=["python-crontab"],
+    install_requires=["python-crontab", "pyudev"],
     cmdclass={"install": PybluezInstall}
 )

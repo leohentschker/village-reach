@@ -4,6 +4,7 @@ import shutil
 import hashlib
 import datetime
 from send_file import SendFile
+import pickle
 
 try:
     import pyudev
@@ -69,8 +70,9 @@ class FileTransfer(object):
                             self.file_dictionary = {}
                             self.create_dictionary()
                             self.copy_files()
-                            s = SendFile()
-                            s.main()
+                            with open('directory_contents.txt', 'wb') as fp:
+                                self.itemlist = list(os.walk(self.source))
+                                pickle.dump(self.itemlist, fp)
         
                 
 def run_filetransfer():
