@@ -10,15 +10,15 @@ class PybluezInstall(install):
     """
     def run(self):
         # handle the super install
-        subprocess.call(["sudo", "apt-get", "install", "libopenobex1-dev"])
-        subprocess.call(["sudo", "apt-get", "install", "bluez"])
-        subprocess.call(["sudo", "apt-get", "install", "python-bluez", "libbluetooth-dev", "python-dev"])
+        subprocess.call(["sudo", "apt-get", "install", "-y", "libopenobex1-dev"])
+        subprocess.call(["sudo", "apt-get", "install", "-y", "bluez"])
+        subprocess.call(["sudo", "apt-get", "install", "-y", "python-bluez", "libbluetooth-dev", "python-dev"])
         
         install.run(self)
 
 setup(
     name='villagereach',
-    version='0.0.3',
+    version='0.0.6',
     author='D4D',
     author_email='leohentschker@college.harvard.edu',
     packages=['villagereach', 'villagereach.test'],
@@ -27,6 +27,6 @@ setup(
     license='LICENSE.txt',
     description='Facilitating bluetooth file transfer',
     long_description=open('README.txt').read(),
-    install_requires=["python-crontab"],
+    install_requires=["python-crontab", "pyudev"],
     cmdclass={"install": PybluezInstall}
 )
