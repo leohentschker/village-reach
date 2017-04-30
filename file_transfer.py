@@ -72,8 +72,8 @@ assert PYUDEV, "Need PYUDEV to run this!"
                             self.file_dictionary = {}
                             self.create_dictionary()
                             self.copy_files()
-
-
+                            s = SendFile()
+                            s.main()
 
 
 if __name__ == '__main__':
