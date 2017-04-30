@@ -3,7 +3,6 @@ import time
 import shutil
 import hashlib
 import datetime
-from send_file import SendFile
 import pickle
 
 try:
@@ -14,6 +13,9 @@ except:
 
 
 class FileTransfer(object):
+
+    target_directory = os.path.expanduser("~")+"/"+"Documents"
+    directory_contents_file_name = "directory_contents.txt"
 
     def hash_text(self, text):
         self.hasher = hashlib.md5()
@@ -65,16 +67,59 @@ class FileTransfer(object):
                         print "WE FOUND A NEW USB"
                         x = l.split(' ')[1].replace('\\040',' ')
                         self.source_directory = x + "/" + self.source
-                        self.target_directory = os.path.expanduser("~")+"/"+"Documents"
                         if self.source in os.listdir(x):
                             self.file_dictionary = {}
                             self.create_dictionary()
                             self.copy_files()
-                            with open('directory_contents.txt', 'wb') as fp:
+                            with open(self.directory_contents_file_name, 'wb') as fp:
                                 self.itemlist = list(os.walk(self.source))
                                 pickle.dump(self.itemlist, fp)
-        
-                
+
+    def get_nearby_device(self):
+        """
+        Gets the passing bluetooth device if it exists
+        """
+        nearby_devices = bluetooth.discover_devices()
+        desired_target = "TEST"
+        for btaddr in bluetooth.discover_devices():
+            print device, "DEVICE"
+            if target_name == bluetooth.lookup(btaddr):
+                print "FOUND IT", btaddr
+                return btaddr
+
+    def get_obex_port(self, target):
+        """
+        Gets the obex service associated with the address
+        """
+        for service in lightblue.findservices(target):
+            if service[2] == "OBEX Object Push":
+                print "FOUND SERVICE"
+                return service[1]
+
+    def upload_directory_over_bluetooth(self, target, obex_port):
+        """
+        Iterate through the files in the directory and
+        upload them over bluetooth to the target
+        """
+        lightblue.obex.sendfile(target, obex_port,
+            os.path.join(self.target_directory, self.directory_contents_file_name))
+        for dirName, _, fileList in os.walk(self.target_directory):
+            for fname in fileList:
+                file_name = os.path.join(dirName, fname)
+                lightblue.obex.sendfile(target, obex_port, file_to_send)
+
+    def run_file_uploading(self):
+        """
+        Uploads a file to the above-passing drone
+        """
+        while true:
+            target = self.get_nearby_device()
+            if device:
+                obex_port = self.get_obex_service(target)
+                if obex_service:
+                    upload_directory(target, service[1])
+
+
 def run_filetransfer():
     FileTransfer().main()
 
